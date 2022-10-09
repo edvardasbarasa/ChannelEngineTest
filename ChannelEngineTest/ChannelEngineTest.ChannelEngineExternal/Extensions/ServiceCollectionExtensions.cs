@@ -1,4 +1,5 @@
-﻿using ChannelEngineTest.ChannelEngineExternal.Models;
+﻿using ChannelEngineTest.ChannelEngineExternal.Decorators;
+using ChannelEngineTest.ChannelEngineExternal.Models;
 using ChannelEngineTest.ChannelEngineExternal.Services;
 using ChannelEngineTest.Core.Externals;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,8 @@ namespace ChannelEngineTest.ChannelEngineExternal.Extensions
             {
                 c.BaseAddress = new System.Uri(baseAddress);
             });
+            
+            services.Decorate<IChannelEngineService, ChannelEngineServiceRetryDecorator>();
 
             return services;
         }

@@ -9,10 +9,12 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Polly" Version="7.2.2" />
+        <PackageReference Include="Scrutor" Version="3.3.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ChannelEngineTest.Core\ChannelEngineTest.Core.csproj" />
+        <ProjectReference Include="..\ChannelEngineTest.Core\ChannelEngineTest.Core.csproj" />
     </ItemGroup>
 
 </Project>

@@ -115,6 +115,11 @@ namespace ChannelEngineTest.ChannelEngineExternal.Services
                 return result;
             }
 
+            if (response.StatusCode == HttpStatusCode.TooManyRequests)
+            {
+                throw new QuotaExceededException();
+            }
+            
             throw new Exception(
                 $"Error while requesting ChannelEngine - request {response.RequestMessage.RequestUri} response status code {response.StatusCode}");
         }
