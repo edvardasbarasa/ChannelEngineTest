@@ -47,6 +47,29 @@ namespace ChannelEngineTest.ChannelEngineExternal.Services
             return products.Select(i => i.Value).OrderByDescending(i => i.CountInProgress).Take(top).ToList();
         }
         
+        public async Task SetProductStockAsync(string merchantProductNo, int stock)
+        {
+            var request = GetRequestString("products");
+
+            var json = JsonConvert.SerializeObject(new SetProductStockRequest()
+            {
+                PropertiesToUpdate = new List<string>() { nameof(MerchantProductRequestModel.Stock) },
+                MerchantProductRequestModels = new List<MerchantProductRequestModel>()
+                {
+                    new MerchantProductRequestModel()
+                    {
+                        Stock = stock,
+                        MerchantProductNo = merchantProductNo
+                    }
+                }
+            });
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _client.PatchAsync(request, data);
+            var result = await GetResult<object>(response);
+        }
+        
         private async Task<IReadOnlyList<Order>> GetOrdersInProgress()
         {
             var request = GetRequestString("orders", new Dictionary<string, string>()
