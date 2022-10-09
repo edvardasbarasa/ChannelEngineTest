@@ -5,7 +5,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ChannelEngineTest.ChannelEngineExternal\ChannelEngineTest.ChannelEngineExternal.csproj" />
       <ProjectReference Include="..\ChannelEngineTest.Core\ChannelEngineTest.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.4.0" />
     </ItemGroup>
 
 </Project>
