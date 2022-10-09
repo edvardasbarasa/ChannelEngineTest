@@ -46,7 +46,7 @@ namespace ChannelEngineTest.ChannelEngineExternal.Services
 
             return products.Select(i => i.Value).OrderByDescending(i => i.CountInProgress).Take(top).ToList();
         }
-        
+
         public async Task SetProductStockAsync(string merchantProductNo, int stock)
         {
             var request = GetRequestString("products");
@@ -69,21 +69,37 @@ namespace ChannelEngineTest.ChannelEngineExternal.Services
             var response = await _client.PatchAsync(request, data);
             var result = await GetResult<object>(response);
         }
-        
+
         private async Task<IReadOnlyList<Order>> GetOrdersInProgress()
         {
-            var request = GetRequestString("orders", new Dictionary<string, string>()
+            var page = 0;
+            var lastPage = false;
+            var orders = new List<Order>();
+
+            // non stop pulling of the external api bad Idea because we can easily go to 429
+            do
             {
-                { "statuses", OrderStatus.IN_PROGRESS.ToString() }
-            });
+                page++;
 
-            var response = await _client.GetAsync(request);
-            var result = await GetResult<List<Order>>(response);
+                var request = GetRequestString("orders", new Dictionary<string, string>()
+                {
+                    { "statuses", OrderStatus.IN_PROGRESS.ToString() },
+                    { "page", page.ToString() }
+                });
 
-            return result;
+                var response = await _client.GetAsync(request);
+                var result = await GetResult<List<Order>>(response);
+
+                orders.AddRange(result.Content);
+
+                lastPage = result.Count < result.ItemsPerPage;
+            } 
+            while (!lastPage);
+
+            return orders;
         }
 
-        private async Task<T> GetResult<T>(HttpResponseMessage response)
+        private async Task<RequestRoot<T>> GetResult<T>(HttpResponseMessage response)
         {
             if (response.IsSuccessStatusCode)
             {
@@ -96,7 +112,7 @@ namespace ChannelEngineTest.ChannelEngineExternal.Services
                         $"Error while requesting ChannelEngine - request {response.RequestMessage.RequestUri} result {result.Message}");
                 }
 
-                return result.Content;
+                return result;
             }
 
             throw new Exception(
